@@ -36,11 +36,9 @@ tickers_list      = sorted({t for sub in regions_map.values() for t in sub})
 events_list       = [e["name"] for e in events]
 
 
-
 # 3) Application Dash
 app = dash.Dash(__name__)
 server = app.server
-
 
 
 app.layout = html.Div(
@@ -90,8 +88,30 @@ app.layout = html.Div(
 
         dcc.Graph(id='volume-chart')
 
-    ]),
+    ])
 
+    ]  
+)  
+
+# 4) Callbacks
+# --- callback pour Visu 0 ---
+
+@app.callback( Output('volume-chart', 'figure'), 
+              Output('window-value', 'children'), 
+              Input('ticker-dropdown','value'), 
+              Input('window-slider', 'value'), 
+              ) 
+def update_volume_chart(ticker, rolling_window): 
+    """ Renvoie la figure polaire et la chaîne affichant la fenêtre choisie. """ 
+    fig = build_polar_volume_chart(df, events, ticker, rolling_window) # on force int() pour éviter les .0 
+    return fig, f"{int(rolling_window)} jours"
+
+# 5) Lancement
+if __name__ == '__main__':
+    app.run_server(debug=True)
+
+
+    '''
         # --- Visu 1 : heatmap des rendements
         html.Div(className='viz-section', children=[
             html.H2("Heatmap des rendements"),
@@ -163,23 +183,9 @@ app.layout = html.Div(
             ),
             dcc.Graph(id='compare-chart')
         ])
+        '''
 
-    ]  
-)  
-
-
-# 4) Callbacks
-# --- callback pour Visu 0 ---
-
-@app.callback( Output('volume-chart', 'figure'), 
-              Output('window-value', 'children'), 
-              Input('ticker-dropdown','value'), 
-              Input('window-slider', 'value'), 
-              ) 
-def update_volume_chart(ticker, rolling_window): 
-    """ Renvoie la figure polaire et la chaîne affichant la fenêtre choisie. """ 
-    fig = build_polar_volume_chart(df, events, ticker, rolling_window) # on force int() pour éviter les .0 
-    return fig, f"{int(rolling_window)} jours"
+'''
 
 # --- callback pour Visu 1 ---
 @app.callback(
@@ -216,6 +222,8 @@ def update_choro(ev):
 def update_compare(ev, metric):
     return build_compare_chart(df, events, ev, asset_classes_map, window=5, metric=metric)
 
-# 5) Lancement
-if __name__ == '__main__':
-    app.run_server(debug=True)
+    
+    '''
+
+
+    
