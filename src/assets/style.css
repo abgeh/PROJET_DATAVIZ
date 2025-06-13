@@ -19,7 +19,7 @@
 .rc-slider-handle {
   width: 16px;
   height: 16px;
-  margin-top: -5px;               /* vertically center the knob */
+  margin-top: -5px;
   border: 2px solid var(--color-accent);
   background-color: var(--color-card);
 }
@@ -39,7 +39,7 @@
   --color-event:     brown;
   --spacer:          20px;
   --radius:          8px;
-  --transition:      0.6s ease-out;
+  --transition:      0.8s ease-out;
   --font-base:       "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   --fs-h1:           clamp(1.8rem, 5vw, 2.4rem);
   --fs-h2:           clamp(1.4rem, 3vw, 1.8rem);
@@ -54,12 +54,11 @@ body {
   scroll-behavior: smooth;
 }
 
-/* === Conteneur principal + scroll-snap === */
+/* === Conteneur principal === */
 #react-entry-point, .dash-app {
   max-width: 1000px;
   margin: 0 auto;
   padding: var(--spacer);
-  scroll-snap-type: y mandatory;
 }
 
 /* === Titres === */
@@ -72,6 +71,7 @@ h1 {
   font-size: var(--fs-h1);
   text-align: center;
   margin-top: var(--spacer);
+  animation: fadeInDown 1s ease-out;
 }
 h2 {
   font-size: var(--fs-h2);
@@ -80,32 +80,54 @@ h2 {
   margin-top: calc(var(--spacer)*2);
 }
 
-/* === Section de visualisation === */
+/* === Section de visualisation avec animation automatique === */
 .viz-section {
   background: var(--color-card);
   border-radius: var(--radius);
   box-shadow: 0 2px 6px var(--color-shadow);
   padding: calc(var(--spacer)*1.5) var(--spacer);
   margin-bottom: calc(var(--spacer)*2);
-  scroll-snap-align: start;
+  
+  /* Animation automatique au chargement */
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity var(--transition), transform var(--transition);
+  transform: translateY(30px);
+  animation: fadeInUp 1.2s ease-out 0.5s forwards;
 }
-.viz-section.visible {
-  opacity: 0;
-  transform: translateY(0);
+
+/* Délai d'animation pour les sections multiples */
+.viz-section:nth-child(2) { animation-delay: 0.7s; }
+.viz-section:nth-child(3) { animation-delay: 0.9s; }
+.viz-section:nth-child(4) { animation-delay: 1.1s; }
+.viz-section:nth-child(5) { animation-delay: 1.3s; }
+
+/* === Animations === */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* === Contrôles internes à chaque viz === */
-.viz-section .control-group {
+.control-group {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacer);
   align-items: center;
   margin-bottom: var(--spacer);
 }
-.viz-section .control-group label {
+.control-group label {
   font-weight: bold;
   white-space: nowrap;
 }
@@ -119,7 +141,6 @@ h2 {
 }
 
 /* === Scrollbar custom === */
-/* Webkit */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -130,7 +151,6 @@ h2 {
   background-color: var(--color-highlight);
   border-radius: 4px;
 }
-/* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-highlight) var(--color-bg);
@@ -146,5 +166,9 @@ h2 {
   }
   h2 {
     font-size: 1.4rem;
+  }
+  .control-group {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
