@@ -1,113 +1,170 @@
-import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import numpy as np
+from datetime import datetime, timedelta
 
-def build_polar_volume_chart(
-    df: pd.DataFrame,
-    events: list[dict],
-    ticker: str,
-    rolling_window: int = 7,
-    start_date: str = "2008-01-01",
-    end_date: str = "2023-12-31"
-) -> go.Figure:
+def build_polar_volume_chart(df, events, ticker, rolling_window=7):
     """
-    Diagramme polaire du volume lissé sur rolling_window jours,
-    avec repères d'événements.
+    Construit un graphique polaire des volumes journaliers avec événements marqués.
+    
+    Parameters:
+    df: DataFrame avec dates en index, tickers en colonnes
+    events: liste des événements 
+    ticker: nom du ticker sélectionné
+    rolling_window: fenêtre de lissage
     """
-
-    # 0) Clamp de rolling_window pour qu'il soit au moins 1
-    try:
-        rw = int(rolling_window)
-    except (TypeError, ValueError):
-        rw = 1
-    if rw < 1:
-        rw = 1
-
-    # 1) Préparation du cadre temporel
-    full_start = pd.to_datetime(start_date)
-    full_end   = pd.to_datetime(end_date)
-    total_days = (full_end - full_start).days
-
-    # 2) Filtrer / trier / lisser
-    dft = (
-        df[df["Ticker"] == ticker]
-        .copy()
-        .assign(Date=lambda d: pd.to_datetime(d["Date"]))
-        .sort_values("Date")
-    )
-    dft["vol_smooth"] = dft["Volume"].rolling(rw, min_periods=1).mean()
-    dft["Theta"]      = 360 * (dft["Date"] - full_start).dt.days / total_days
-    dft["Radius"]     = dft["vol_smooth"] / 1e9  # milliards
-
-    max_r = dft["Radius"].max() or 1
-
-    fig = go.Figure()
-
-    # 3) Trace principale + hover date/volume
-    fig.add_trace(go.Scatterpolar(
-        theta       = dft["Theta"],
-        r           = dft["Radius"],
-        mode        = "lines",
-        line        = dict(color="teal", width=1),
-        fill        = "toself",
-        fillcolor   = "rgba(0,128,128,0.2)",
-        customdata  = np.stack([
-                          dft["Date"].dt.strftime("%Y-%m-%d"),
-                          dft["Radius"]
-                        ], axis=1),
-        hovertemplate=
-            "Date : %{customdata[0]}<br>"
-            "Volume glissant : %{customdata[1]:.2f} Md<extra></extra>",
-        showlegend=False
-    ))
-
-    # 4) Repères annuels
-    for year in range(full_start.year, full_end.year + 1):
-        anchor = pd.Timestamp(f"{year}-01-01")
-        angle  = 360 * (anchor - full_start).days / total_days
-        fig.add_trace(go.Scatterpolar(
-            theta=[angle],
-            r    =[max_r * 1.03],
-            mode ="text",
-            text =[str(year)],
-            textfont=dict(size=9, color="black"),
-            hoverinfo="skip",
+    
+    # Vérifier que le ticker existe
+    if ticker not in df.columns:
+        available_tickers = [col for col in df.columns if not col.endswith(('_return', '_volatility'))]
+        print(f"Ticker {ticker} non trouvé. Tickers disponibles: {available_tickers}")
+        
+        # Retourner un graphique vide avec message d'erreur
+        fig = go.Figure()
+        fig.add_annotation(
+            text=f"Données non disponibles pour {ticker}",
+            x=0.5, y=0.5,
+            xref="paper", yref="paper",
+            showarrow=False,
+            font=dict(size=16, color="red")
+        )
+        fig.update_layout(
+            title=f"Volume journalier - {ticker}",
             showlegend=False
-        ))
-
-    # 5) Événements géopolitiques (ligne + label jitter)
-    for idx, ev in enumerate(events):
-        ev_date    = pd.to_datetime(ev["date"])
-        base_angle = 360 * (ev_date - full_start).days / total_days
-
-        # Ligne de repère
-        fig.add_trace(go.Scatterpolar(
-            theta      = [base_angle, base_angle],
-            r          = [0, max_r],
-            mode       = "lines",
-            line       = dict(dash="dash", color="brown", width=1),
-            hoverinfo  = "skip",
-            showlegend = False
-        ))
-
-        # Label légèrement décalé pour éviter chevauchement
-        angle_jit = base_angle + ((idx % 2) * 4 - 2)   # ±2°
-        r_label   = max_r * (1.08 + (idx % 2) * 0.03)
-        fig.add_trace(go.Scatterpolar(
-            theta      = [angle_jit],
-            r          = [r_label],
-            mode       = "text",
-            text       = [ev["name"]],
-            textfont   = dict(size=8, color="brown"),
-            hoverinfo  = "skip",
-            showlegend = False
-        ))
-
-    # 6) Mise en page
+        )
+        return fig
+    
+    # Extraire les données du ticker sélectionné
+    ticker_data = df[ticker].dropna().copy()
+    
+    if len(ticker_data) == 0:
+        # Retourner un graphique vide si pas de données
+        fig = go.Figure()
+        fig.add_annotation(
+            text=f"Aucune donnée valide pour {ticker}",
+            x=0.5, y=0.5,
+            xref="paper", yref="paper", 
+            showarrow=False,
+            font=dict(size=16, color="red")
+        )
+        fig.update_layout(title=f"Volume journalier - {ticker}")
+        return fig
+    
+    # Convertir en DataFrame pour faciliter les calculs
+    data = pd.DataFrame({
+        'Date': ticker_data.index,
+        'Volume': ticker_data.values
+    })
+    
+    # Appliquer le lissage
+    if rolling_window > 1:
+        data['Volume_smooth'] = data['Volume'].rolling(
+            window=rolling_window, 
+            center=True,
+            min_periods=1
+        ).mean()
+    else:
+        data['Volume_smooth'] = data['Volume']
+    
+    # Ajouter les informations temporelles pour le graphique polaire
+    data['Month'] = data['Date'].dt.month
+    data['Day_of_year'] = data['Date'].dt.dayofyear
+    data['Year'] = data['Date'].dt.year
+    
+    # Calculer l'angle pour chaque point (0-360°, basé sur le jour de l'année)
+    data['Angle'] = (data['Day_of_year'] / 365.25) * 360
+    
+    # Créer le graphique polaire
+    fig = go.Figure()
+    
+    # Ajouter les données de volume comme trace polaire
+    fig.add_trace(go.Scatterpolar(
+        r=data['Volume_smooth'],
+        theta=data['Angle'],
+        mode='lines+markers',
+        name=f'Volume {ticker}',
+        line=dict(color='rgba(0, 168, 255, 0.8)', width=2),
+        marker=dict(size=3, color='rgba(0, 168, 255, 0.6)'),
+        hovertemplate=(
+            f"<b>{ticker}</b><br>" +
+            "Date: %{customdata}<br>" +
+            "Volume: %{r:,.0f}<br>" +
+            "<extra></extra>"
+        ),
+        customdata=data['Date'].dt.strftime('%Y-%m-%d')
+    ))
+    
+    # Ajouter les événements comme points spéciaux
+    event_colors = ['red', 'orange', 'purple', 'green', 'brown', 'pink', 'gray', 'cyan']
+    
+    for i, event in enumerate(events):
+        event_date = pd.to_datetime(event['date'])
+        
+        # Trouver le point de données le plus proche de l'événement
+        closest_idx = (data['Date'] - event_date).abs().idxmin()
+        
+        if closest_idx in data.index:
+            closest_data = data.loc[closest_idx]
+            
+            # Vérifier que l'événement est dans la plage temporelle des données
+            time_diff = abs((closest_data['Date'] - event_date).days)
+            
+            if time_diff <= 30:  # Afficher seulement si l'événement est dans les 30 jours des données
+                fig.add_trace(go.Scatterpolar(
+                    r=[closest_data['Volume_smooth']],
+                    theta=[closest_data['Angle']],
+                    mode='markers',
+                    name=event['name'],
+                    marker=dict(
+                        size=12,
+                        color=event_colors[i % len(event_colors)],
+                        symbol='star'
+                    ),
+                    hovertemplate=(
+                        f"<b>{event['name']}</b><br>" +
+                        f"Date: {event_date.strftime('%Y-%m-%d')}<br>" +
+                        f"Volume: {closest_data['Volume_smooth']:,.0f}<br>" +
+                        "<extra></extra>"
+                    )
+                ))
+    
+    # Configuration du layout polaire
     fig.update_layout(
-        title = f"Volume {ticker} (2008–2023) – {rw}-j glissant",
-        polar = dict(radialaxis=dict(visible=False), angularaxis=dict(visible=False)),
-        margin=dict(t=50,b=20,l=20,r=20)
-    )
+        title=dict(
+            text=f"Volume journalier - {ticker} (Lissage: {rolling_window} jours)",
+            x=0.5,
+            font=dict(size=16)
+        ),
+        polar=dict(
+        bgcolor="rgba(240, 240, 240, 0.1)",
+        radialaxis=dict(
+            title="Volume d'échange",
+            gridcolor="rgba(0,0,0,0.1)",
+            linecolor="rgba(0,0,0,0.2)"
+        ),
+        angularaxis=dict(
+            # title supprimé car non supporté pour angularaxis
+            tickmode="array",
+            tickvals=[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330],
+            ticktext=["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", 
+                    "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"],
+            gridcolor="rgba(0,0,0,0.1)",
+            linecolor="rgba(0,0,0,0.2)",
+            direction="clockwise",
+            rotation=90
+        )
+    ),
 
+        showlegend=True,
+        legend=dict(
+            orientation="v",
+            yanchor="top",
+            y=1,
+            xanchor="left", 
+            x=1.05
+        ),
+        margin=dict(l=80, r=120, t=80, b=80),
+        height=600
+    )
+    
     return fig
