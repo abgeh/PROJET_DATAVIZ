@@ -5,7 +5,7 @@ from dash import html
 
 from data_loader import load_market_data
 from data_processor import compute_daily_returns, compute_volatility
-from layout_components import create_header, create_volume_section, create_choropleth_section
+from layout_components import create_header, create_volume_section, create_heatmap_section, create_choropleth_section
 from callbacks import register_callbacks
 
 # === 1) CHARGEMENT DES DONNÉES ===
@@ -45,6 +45,7 @@ app.layout = html.Div(
     children=[
         create_header(),
         create_volume_section(tickers_list),
+        create_heatmap_section(events_list),  # NOUVEAU
         create_choropleth_section(events_list)
     ]
 )
