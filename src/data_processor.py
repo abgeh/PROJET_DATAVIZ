@@ -1,49 +1,79 @@
 import pandas as pd
-import json
-from datetime import timedelta
-
-# Charger la config
-with open("config/tickers.json") as f:
-    _CFG = json.load(f)
+import numpy as np
 
 def compute_daily_returns(df):
-    """Ajoute la colonne 'ret' = variation journalière des cours."""
-    df = df.copy()
-    df['ret'] = df.groupby('Ticker')['Close'].pct_change()
-    return df
+    """
+    Calcule les rendements journaliers sur les volumes.
+    df: DataFrame avec dates en index, tickers en colonnes, volumes en valeurs
+    """
+    # Calculer les variations journalières de volume (en pourcentage)
+    returns_df = df.pct_change().fillna(0)
+    
+    # Ajouter un préfixe pour distinguer les colonnes de rendement
+    returns_df = returns_df.add_suffix('_return')
+    
+    # Combiner les données originales avec les rendements
+    result = pd.concat([df, returns_df], axis=1)
+    
+    return result
 
-def compute_volatility(df, window=5):
-    """Ajoute la colonne 'vol' = écart-type glissant des rendements."""
-    df = df.copy()
-    df['vol'] = (
-        df.groupby('Ticker')['ret']
-          .rolling(window=window, min_periods=1)
-          .std()
-          .reset_index(level=0, drop=True)
-    )
-    return df
+def compute_volatility(df, window=30):
+    """
+    Calcule la volatilité glissante sur les volumes.
+    df: DataFrame avec dates en index, tickers en colonnes
+    window: fenêtre glissante pour la volatilité
+    """
+    # Identifier les colonnes de volume (sans suffixe _return)
+    volume_cols = [col for col in df.columns if not col.endswith('_return')]
+    
+    # Calculer la volatilité glissante pour chaque ticker
+    volatility_data = {}
+    
+    for ticker in volume_cols:
+        if ticker in df.columns:
+            # Calculer les rendements si pas déjà fait
+            returns = df[ticker].pct_change().fillna(0)
+            # Volatilité = écart-type glissant des rendements
+            vol = returns.rolling(window=window, min_periods=1).std()
+            volatility_data[f'{ticker}_volatility'] = vol
+    
+    # Créer DataFrame de volatilité
+    volatility_df = pd.DataFrame(volatility_data, index=df.index)
+    
+    # Combiner avec les données existantes
+    result = pd.concat([df, volatility_df], axis=1)
+    
+    return result
 
-def get_event_window(df, event_date, pre=5, post=5):
+def get_ticker_data(df, ticker, data_type='volume'):
     """
-    Filtre df pour ne garder que [event_date-pre … event_date+post].
-    Renvoie une copie avec la colonne day_rel.
+    Extrait les données d'un ticker spécifique.
+    
+    Parameters:
+    df: DataFrame principal
+    ticker: nom du ticker (ex: '^DJI')
+    data_type: 'volume', 'return', ou 'volatility'
+    
+    Returns:
+    Series avec les données demandées
     """
-    df = df.copy()
-    start = pd.to_datetime(event_date) - timedelta(days=pre)
-    end   = pd.to_datetime(event_date) + timedelta(days=post)
-    mask  = (df['Date'] >= start) & (df['Date'] <= end)
-    win   = df.loc[mask].copy()
-    win['day_rel'] = (win['Date'] - pd.to_datetime(event_date)).dt.days
-    return win
+    if data_type == 'volume':
+        col_name = ticker
+    elif data_type == 'return':
+        col_name = f'{ticker}_return'
+    elif data_type == 'volatility':
+        col_name = f'{ticker}_volatility'
+    else:
+        raise ValueError("data_type doit être 'volume', 'return', ou 'volatility'")
+    
+    if col_name in df.columns:
+        return df[col_name].dropna()
+    else:
+        print(f"Colonne {col_name} non trouvée. Colonnes disponibles: {df.columns.tolist()}")
+        return pd.Series(dtype=float)
 
-def aggregate_region_returns(df_win, region_key="regions"):
+def get_available_tickers(df):
     """
-    Agrège les retours moyens par continent d'après le mapping config/tickers.json.
-    Renvoie DataFrame [region, mean_return].
+    Retourne la liste des tickers disponibles (colonnes sans suffixe).
     """
-    rows = []
-    for region, tickers in _CFG.get(region_key,{}).items():
-        sub = df_win[df_win['Ticker'].isin(tickers)]
-        mean_r = sub['ret'].mean() * 100
-        rows.append({'region': region, 'mean_return': mean_r})
-    return pd.DataFrame(rows)
+    return [col for col in df.columns if not col.endswith(('_return', '_volatility'))]
