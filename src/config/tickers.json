@@ -1,11 +1,12 @@
 {
   "regions": {
-    "Americas": ["^GSPC","^DJI","^IXIC","^MXX"],
-    "Europe":   ["^FTSE","^GDAXI","^FCHI","^IBEX"],
-    "Asia":     ["^N225","000001.SS","^HSI","^AXJO"]
+    "Americas": ["^GSPC", "^DJI", "^IXIC", "^NYA"],
+    "Europe":   ["^FTSE"],
+    "Asia":     ["^N225", "000001.SS", "^NSEI", "^BSESN"]
   },
   "asset_classes": {
-    "Actions":            ["^GSPC","^DJI","^IXIC","^FTSE","^GDAXI","^FCHI","^N225","^HSI"],
-    "Matières Premières": ["GC=F","CL=F","BZ=F","SI=F"]
+    "Actions":            ["^GSPC", "^DJI", "^IXIC", "^FTSE", "^N225", "000001.SS"],
+    "Matières Premières": ["GC=F", "CL=F"],
+    "Indices Composites": ["^NYA", "^NSEI", "^BSESN", "^N100"]
   }
 }
