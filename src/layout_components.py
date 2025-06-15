@@ -333,4 +333,119 @@ def _create_heatmap_controls(events_list):
                     ])
                 ])
 
+#visu 3
+def create_volatility_section(events_list):
+    """Crée la section complète de visualisation de volatilité."""
+    return html.Div(className='viz-section', children=[
+        html.H2("Évolution de la volatilité"),
+
+        # Description de la volatilité
+        html.Div(className='section-intro', style={
+            'backgroundColor': '#f8f9fa',
+            'padding': '20px',
+            'borderRadius': '8px',
+            'marginBottom': '25px',
+            'borderLeft': '4px solid var(--color-highlight)'
+        }, children=[
+            html.P([
+                "La ", html.Strong("volatilité"), " mesure l'instabilité des rendements d'un indice boursier. ",
+                "Cette visualisation présente l'", html.Em("écart-type mobile"), " des rendements journaliers ",
+                "calculé sur une fenêtre glissante, révélant comment l'incertitude des marchés évolue ",
+                html.Strong("avant, pendant et après"), " un événement géopolitique."
+            ], style={'marginBottom': '12px', 'lineHeight': '1.5'}),
+            
+            html.P([
+                "Chaque ", html.Strong("courbe"), " trace l'évolution temporelle de la volatilité pour un indice ou un groupe d'indices. ",
+                "Les ", html.Em("pics de volatilité"), " indiquent des périodes d'incertitude accrue, souvent liées aux réactions ",
+                "immédiates des investisseurs face aux chocs externes. La ligne rouge marque le jour exact de l'événement."
+            ], style={'marginBottom': '12px', 'lineHeight': '1.5'}),
+            
+            html.P([
+                "Explorez différents groupements (indices individuels, régions, types d'actifs) et ajustez ",
+                "la fenêtre d'analyse pour observer les patterns de volatilité caractéristiques de chaque type de crise."
+            ], style={'marginBottom': '0', 'fontSize': '14px', 'color': '#6c757d', 'lineHeight': '1.4'})
+        ]),
+        
+        # Contrôles
+        _create_volatility_controls(events_list),
+
+        # Graphique
+        dcc.Graph(id='volatility-chart')
+    ])
+
+def _create_volatility_controls(events_list): 
+    """Contrôles pour la volatilité : dropdown + slider unique + groupement."""
+    return html.Div(className='control-group', style={'marginBottom': '30px'}, children=[
+        
+        # Une seule ligne avec tous les contrôles
+        html.Div(style={
+            'display': 'flex',
+            'justifyContent': 'space-between',
+            'alignItems': 'center',
+            'gap': '20px',
+            'padding': '15px',
+            'backgroundColor': 'white',
+            'borderRadius': '8px',
+            'boxShadow': '0 2px 4px rgba(0,0,0,0.05)'
+        }, children=[
+            
+            # Sélection d'événement
+            html.Div(style={'flex': '1'}, children=[
+                html.Label("Événement à analyser :", style={
+                    'fontWeight': '500',
+                    'color': '#495057',
+                    'fontSize': '15px',
+                    'display': 'block',
+                    'marginBottom': '5px'
+                }),
+                dcc.Dropdown(
+                    id='volatility-event-dropdown',
+                    options=[{'label': n, 'value': n} for n in events_list],
+                    value=events_list[0] if events_list else None,
+                    clearable=False,
+                    style={'fontSize': '14px'}
+                ),
+            ]),
+            
+            # Type de groupement
+            html.Div(style={'flex': '1'}, children=[
+                html.Label("Groupement des données :", style={
+                    'fontWeight': '500',
+                    'color': '#495057',
+                    'fontSize': '15px',
+                    'display': 'block',
+                    'marginBottom': '5px'
+                }),
+                dcc.Dropdown(
+                    id='volatility-grouping-dropdown',
+                    options=[
+                        {'label': 'Par région géographique', 'value': 'region'},
+                        {'label': 'Indices individuels', 'value': 'individual'},
+                        {'label': 'Actions vs Matières premières', 'value': 'type'}
+                    ],
+                    value='region',  # CHANGÉ: Par défaut région pour plus de variété
+                    clearable=False,
+                    style={'fontSize': '14px'}
+                ),
+            ]),
+            
+            # UNE SEULE fenêtre temporelle
+            html.Div(style={'flex': '0 0 280px'}, children=[
+                html.Label("Fenêtre d'analyse (±jours) :", style={
+                    'fontWeight': '500',
+                    'color': '#495057',
+                    'fontSize': '15px',
+                    'display': 'block',
+                    'marginBottom': '5px'
+                }),
+                dcc.Slider(
+                    id='volatility-window-slider',
+                    min=3, max=14, step=1, value=7,
+                    marks={i: f"±{i}" for i in [3, 5, 7, 10, 14]},
+                    tooltip={'placement': 'bottom', 'always_visible': True},
+                    updatemode='drag'
+                )
+            ])
+        ])
+    ])
 
