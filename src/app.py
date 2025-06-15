@@ -16,9 +16,9 @@ df = compute_daily_returns(df)
 df = compute_volatility(df)
 
 # === 2) CONFIGURATIONS ===
-with open("config/events.json", "r") as f:
+with open("src/config/events.json", "r") as f:
     events = json.load(f)
-with open("config/tickers.json", "r") as f:
+with open("src/config/tickers.json", "r") as f:
     cfg = json.load(f)
 
 # Conversion des dates
@@ -62,4 +62,5 @@ register_callbacks(app, df, events, regions_map)
 
 # === 6) LANCEMENT ===
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
+
