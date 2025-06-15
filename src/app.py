@@ -5,10 +5,8 @@ from dash import html
 
 from data_loader import load_market_data
 from data_processor import compute_daily_returns, compute_volatility
-from layout_components import create_header, create_volume_section, create_heatmap_section, create_volatility_section, create_choropleth_section, create_compare_section
+from layout_components import create_header, create_volume_section, create_heatmap_section, create_volatility_section, create_choropleth_section
 from callbacks import register_callbacks
-
-
 
 # === 1) CHARGEMENT DES DONNÉES ===
 df = load_market_data()
@@ -16,9 +14,9 @@ df = compute_daily_returns(df)
 df = compute_volatility(df)
 
 # === 2) CONFIGURATIONS ===
-with open("src/config/events.json", "r") as f:
+with open("config/events.json", "r") as f:
     events = json.load(f)
-with open("src/config/tickers.json", "r") as f:
+with open("config/tickers.json", "r") as f:
     cfg = json.load(f)
 
 # Conversion des dates
@@ -41,9 +39,6 @@ regions_map = {
 app = dash.Dash(__name__)
 server = app.server
 
-# Extraire les catégories uniques des événements
-categories = sorted(set(ev["category"] for ev in events if "category" in ev))
-
 # === 4) LAYOUT PRINCIPAL ===
 app.layout = html.Div(
     style={'maxWidth':'900px','margin':'auto','padding':'20px'},
@@ -52,8 +47,7 @@ app.layout = html.Div(
         create_volume_section(tickers_list),
         create_heatmap_section(events_list),
         create_volatility_section(events_list),  # NOUVEAU
-        create_choropleth_section(events_list),
-        create_compare_section(categories) 
+        create_choropleth_section(events_list)
     ]
 )
 
@@ -62,5 +56,4 @@ register_callbacks(app, df, events, regions_map)
 
 # === 6) LANCEMENT ===
 if __name__ == '__main__':
-    app.run(debug=True)
-
+    app.run_server(debug=True)
