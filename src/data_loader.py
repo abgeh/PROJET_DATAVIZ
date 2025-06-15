@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import glob
 
-def load_market_data(data_dir="data", pattern="*_Global_Markets_Data.csv"):
+def load_market_data(data_dir="src/data", pattern="20*_Global_Markets_Data.csv"):
     """
     Charge et combine tous les fichiers CSV de données de marché.
     Retourne un DataFrame avec les dates en index et les tickers en colonnes.

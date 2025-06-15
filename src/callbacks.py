@@ -57,5 +57,17 @@ def register_callbacks(app, df, events, regions_map):
     )
     def update_choropleth(event_name, post_window):
         return build_choropleth(df, events, event_name, regions_map, post_window=post_window)
+    
+    
+
+
+    @app.callback(
+        Output("compare-graph", "figure"),
+        Input("compare-category-dropdown", "value"),
+        Input("compare-mode-radio", "value")
+    )
+    def update_compare(category, mode):
+        return build_compare_chart(df, events, mode=mode, selected_category=category)
+
 
 

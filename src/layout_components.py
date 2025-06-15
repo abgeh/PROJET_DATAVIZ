@@ -449,3 +449,26 @@ def _create_volatility_controls(events_list):
         ])
     ])
 
+
+
+def create_compare_section(categories):
+    return html.Div([
+        html.H3("Visualisation 5 : Rendements moyens ou volatilité par type d’actif"),
+        dcc.Dropdown(
+            id="compare-category-dropdown",
+            options=[{"label": cat, "value": cat} for cat in categories],
+            value=categories[0]
+        ),
+        dcc.RadioItems(
+            id="compare-mode-radio",
+            options=[
+                {"label": "Rendement", "value": "return"},
+                {"label": "Volatilité", "value": "volatility"}
+            ],
+            value="return",
+            labelStyle={"display": "inline-block", "margin-right": "15px"}
+        ),
+        dcc.Graph(id="compare-graph")
+    ], style={"marginBottom": "50px"})
+
+
