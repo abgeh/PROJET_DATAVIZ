@@ -129,12 +129,12 @@ marches-geopolitique/
 
 ## Auteurs
 
-- **[Ahmed Baba GAH EL HILAL]** - *Développement* - 
-- **[Sofiane MOUALDI]** - *Développement* - 
-- **[Evan BLANC]** - *Développement* - 
-- **[Othmane LAKHDAR]** - *Développement* - 
-- **[Ali MOUCHAHID]** - *Développement* - 
-- **[Farid BABA]** - *Développement* - 
+- **Ahmed Baba GAH EL HILAL** - *Développement* - 
+- **Sofiane MOUALDI** - *Développement* - 
+- **Evan BLANC** - *Développement* - 
+- **Othmane LAKHDAR** - *Développement* - 
+- **Ali MOUCHAHID** - *Développement* - 
+- **Farid BABA** - *Développement* - 
 
 ## Remerciements
 
