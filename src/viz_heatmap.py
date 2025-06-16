@@ -36,11 +36,9 @@ def build_heatmap(df, events, selected_event, window_days=7):
     # Trouver toutes les colonnes de rendements
     return_columns = [col for col in df.columns if col.endswith('_return')]
     
-    # Extraire les noms des indices (supprimer '_return')
+    # Extraire les noms des indices 
     available_indices = [col.replace('_return', '') for col in return_columns]
     
-    print(f"📊 Indices trouvés pour la heatmap: {len(available_indices)}")
-    print(f"Liste: {available_indices}")
     
     if not available_indices:
         return _create_empty_heatmap("Aucune donnée de rendement disponible")
@@ -55,7 +53,7 @@ def build_heatmap(df, events, selected_event, window_days=7):
 
 
     # Construire les données pour la heatmap
-    # Construire les données pour la heatmap (version avec gestion weekends)
+    # Construire les données pour la heatmap ( avec gestion weekends)
     records = []
     for ticker in available_indices:
         return_col = f"{ticker}_return"
@@ -69,17 +67,16 @@ def build_heatmap(df, events, selected_event, window_days=7):
             if date in df_returns.index:
                 ret = df_returns.loc[date, return_col]
                 if pd.notna(ret):
-                    # CORRIGÉ: Convertir en pourcentage pour la cohérence
+                    # Convertir en pourcentage pour la cohérence
                     ret_percent = ret * 100
                     records.append({
                         "Indice": ticker,
                         "Jour": offset,
-                        "Rendement": ret_percent,  # CORRIGÉ: valeur en %
+                        "Rendement": ret_percent,  # valeur en %
                         "Date": date.strftime("%Y-%m-%d"),
-                        "Text": f"{ret_percent:.1f}%"  # CORRIGÉ: affichage correct
+                        "Text": f"{ret_percent:.1f}%"  # 
                     })
                 else:
-                    # GARDER TEL QUEL: pour les valeurs N/A
                     records.append({
                         "Indice": ticker,
                         "Jour": offset,
@@ -90,7 +87,7 @@ def build_heatmap(df, events, selected_event, window_days=7):
             else:
                 # Différencier weekends des vraies données manquantes
                 if is_weekend:
-                    # GARDER TEL QUEL: pour les weekends
+
                     records.append({
                         "Indice": ticker,
                         "Jour": offset,
@@ -99,7 +96,6 @@ def build_heatmap(df, events, selected_event, window_days=7):
                         "Text": "📅"  # Icône weekend
                     })
                 else:
-                    # GARDER TEL QUEL: pour les données manquantes
                     records.append({
                         "Indice": ticker,
                         "Jour": offset,
@@ -182,24 +178,5 @@ def build_heatmap(df, events, selected_event, window_days=7):
             )
         ],
         
-        # Annotation pour le jour 0 
-        annotations=[
-            dict(
-                x=-0.5, y=0.95,  # CORRIGÉ: Plus haut pour éviter le sous-titre
-                xref="x", yref="paper",
-                text="📅 Événement",  # CORRIGÉ: Texte plus court
-                showarrow=True,
-                arrowhead=2,
-                arrowsize=1,
-                arrowwidth=2,
-                arrowcolor="black",
-                font=dict(size=10, color="black"),  # CORRIGÉ: Police plus petite
-                bgcolor="rgba(255,255,255,0.9)",
-                bordercolor="black",
-                borderwidth=1,
-                borderpad=2  # AJOUTÉ: Espacement interne réduit
-            )
-        ]
-
     )
     return fig

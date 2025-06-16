@@ -101,7 +101,7 @@ def build_volatility_chart(df, events, selected_event, window_days=7, rolling_wi
 
         legend=dict(
             title='',
-            orientation='h',  # CHANGÉ: Toujours horizontale (supprimé la condition)
+            orientation='h',  
             yanchor='bottom',
             y=0.98,
             xanchor='left',
@@ -110,7 +110,6 @@ def build_volatility_chart(df, events, selected_event, window_days=7, rolling_wi
         template='plotly_white',
         height=500,
         margin=dict(l=60, r=20, t=160, b=80),  
-
 
         
         # Ligne verticale au jour 0 (événement)
@@ -124,24 +123,6 @@ def build_volatility_chart(df, events, selected_event, window_days=7, rolling_wi
             )
         ],
         
-        # Annotation pour le jour 0
-        annotations=[
-            dict(
-                x=-0.3, y=0.01,  # CHANGÉ: Flèche en bas du graphique
-                xref="x", yref="paper",
-                text="📅 Événement",
-                showarrow=True,
-                arrowhead=2,
-                arrowsize=1.2,
-                arrowwidth=2,
-                arrowcolor="red",
-                ay=25,  # AJOUTÉ: Flèche pointant vers le haut
-                font=dict(size=9, color="red"),
-                bgcolor="rgba(255,255,255,0.9)",
-                bordercolor="red",
-                borderwidth=1
-            )
-        ]
     )
 
     # Améliorer le hover
@@ -193,7 +174,6 @@ def _apply_grouping(df_win, grouping):
         df_grouped['Group'] = df_grouped['Ticker']
 
     elif grouping == "region":
-        # CHANGÉ: Seulement 3 régions principales
         region_map = {
             'Americas': ['^GSPC', '^DJI', '^IXIC', '^MXX'],
             'Europe': ['^FTSE', '^GDAXI', '^FCHI', '^IBEX'],
@@ -204,11 +184,10 @@ def _apply_grouping(df_win, grouping):
             for region, tickers in region_map.items():
                 if ticker in tickers:
                     return region
-            # CHANGÉ: Ignorer les autres au lieu de créer une catégorie "Other"
             return None
         
         df_win['Region'] = df_win['Ticker'].apply(get_region)
-        # CHANGÉ: Filtrer pour garder seulement les 3 régions principales
+        # Filtrer pour garder seulement les 3 régions principales
         df_win = df_win[df_win['Region'].notna()].copy()
         
         # Moyenne par région et par jour

@@ -1,31 +1,65 @@
 /* 1) Charger la CSS de rc-slider (pour le composant Dash Slider) */
 @import url("https://unpkg.com/rc-slider/assets/index.css");
 
+
 /* 2) then override the colors so the slider is visible */
+/* Make the slider container much wider */
 .rc-slider {
-  width: 100%;
-  margin: 0 10px;
+  width: 100% !important;
+  margin: 0 20px;
+  padding: 15px 0;
+  min-width: 300px; /* Ensures minimum width */
 }
+
+/* Make the slider rail thicker and longer */
 .rc-slider-rail {
-  height: 6px;
+  height: 14px;
   background-color: #ddd;
-  border-radius: 3px;
+  border-radius: 7px;
 }
+
 .rc-slider-track {
-  height: 6px;
+  height: 14px;
   background-color: var(--color-highlight);
-  border-radius: 3px;
+  border-radius: 7px;
 }
+
+/* Bigger handle */
 .rc-slider-handle {
-  width: 16px;
-  height: 16px;
-  margin-top: -5px;
-  border: 2px solid var(--color-accent);
+  width: 32px;
+  height: 32px;
+  margin-top: -9px;
+  border: 3px solid var(--color-accent);
   background-color: var(--color-card);
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
+
 .rc-slider-handle:hover,
 .rc-slider-handle:focus {
-  box-shadow: 0 0 5px rgba(0,168,255,0.5);
+  box-shadow: 0 0 12px rgba(0,168,255,0.8);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+/* Make the marks more visible and spaced out */
+.rc-slider-mark-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-top: 8px;
+}
+
+.rc-slider-dot {
+  width: 10px;
+  height: 10px;
+  border-width: 2px;
+}
+
+/* Specific styling for the slider container */
+.control-group {
+  width: 100%;
+  max-width: none; /* Remove any width constraints */
 }
 
 /* === Variables & Thème === */
@@ -60,6 +94,7 @@ body {
   margin: 0 auto;
   padding: var(--spacer);
 }
+
 
 /* === Titres === */
 h1, h2 {
@@ -170,5 +205,64 @@ h2 {
   .control-group {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* Styles pour la section intro */
+.section-intro {
+  transition: all 0.3s ease;
+}
+
+.section-intro:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+/* Styles pour les cartes statistiques */
+.stat-card {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  min-width: 120px;
+  text-align: center;
+}
+
+.stats-row {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px 20px;
+  border-radius: var(--radius);
+  margin-bottom: 30px;
+}
+
+/* Améliorations pour les contrôles */
+.control-group .dash-dropdown .Select-control {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.control-group .dash-dropdown .Select-control:hover {
+  border-color: var(--color-highlight);
+}
+
+/* Style pour la carte choroplèthe */
+.choropleth-container {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 2px 6px var(--color-shadow);
+}
+
+/* Responsive pour les contrôles de la carte */
+@media (max-width: 768px) {
+  .control-group > div:first-child {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .control-group > div:first-child > div {
+    flex: 1 !important;
+    margin-bottom: 15px;
   }
 }

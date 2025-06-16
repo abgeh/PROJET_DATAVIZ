@@ -140,7 +140,7 @@ def build_choropleth(df, events, event_name, region_map, post_window=5, range_co
         locations='iso_alpha',
         color='mean_return',
         hover_name='region',
-        color_continuous_scale=custom_colorscale,  # CHANGÉ: Utiliser l'échelle personnalisée
+        color_continuous_scale=custom_colorscale,  
         range_color=range_color,
         color_continuous_midpoint=0,
         title=f"Impact de '{event_name}' sur les marchés mondiaux<br><sub>Rendement moyen {post_window} jours après le {event_date.strftime('%d/%m/%Y')}</sub>"
@@ -176,7 +176,7 @@ def build_choropleth(df, events, event_name, region_map, post_window=5, range_co
         tickformat=".0f",
         len=0.8,
         thickness=20,
-        # CHANGÉ: Points clés pour l'échelle personnalisée
+        # Points clés pour l'échelle personnalisée
         tickvals=[-100, -20, 0, 20, 100],
         ticktext=["-100%", "-20%", "0%", "+20%", "+100%"],
         tickfont=dict(size=11),

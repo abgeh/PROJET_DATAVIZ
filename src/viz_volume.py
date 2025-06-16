@@ -35,7 +35,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
         fig.update_layout(title=f"Volume journalier - {ticker}")
         return fig
     
-    # === LOGIQUE TEMPORELLE CHRONOLOGIQUE (VOTRE LOGIQUE - INCHANGÉE) ===
+    # === LOGIQUE TEMPORELLE CHRONOLOGIQUE  ===
     data = pd.DataFrame({
         'Date': ticker_data.index,
         'Volume': ticker_data.values
@@ -82,7 +82,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
     # === CRÉATION DU GRAPHIQUE ===
     fig = go.Figure()
     
-    # 1) TRACE DE REMPLISSAGE (VOTRE LOGIQUE - INCHANGÉE)
+    # 1) TRACE DE REMPLISSAGE 
     if len(data) > 2:
         fill_angles = np.concatenate([[data['Theta'].iloc[0]], data['Theta'].values, [data['Theta'].iloc[-1]]])
         fill_radius = np.concatenate([[0], data['Radius'].values, [0]])
@@ -99,7 +99,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
             name='Remplissage'
         ))
 
-    # 2) TRACE PRINCIPALE (ENHANCED BUT SAME LOGIC)
+    # 2) TRACE PRINCIPALE 
     fig.add_trace(go.Scatterpolar(
         r=data['Radius'],
         theta=data['Theta'],
@@ -116,8 +116,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
         customdata=data['Date'].dt.strftime('%d/%m/%Y')
     ))
 
-    # 3) REPÈRES ANNUELS (VOTRE LOGIQUE - INCHANGÉE)
-# 3) REPÈRES ANNUELS (VERSION CORRIGÉE POUR SYNCHRONISATION)
+    # 3) REPÈRES ANNUELS 
     year_annotations = []
     years_in_data = sorted(data['Date'].dt.year.unique())
 
@@ -131,10 +130,8 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
         days_from_start = (year_start - date_min).days
         angle_deg = (days_from_start / total_days) * 360
         
-        # 🔧 CORRECTION : Ajuster pour correspondre à la config du graphique polaire
-        # Le graphique a rotation=90 et direction="clockwise"
-        # On doit ajuster l'angle pour que les annotations correspondent
-        adjusted_angle_rad = np.radians(90 - angle_deg)  # Correction du décalage
+   
+        adjusted_angle_rad = np.radians(90 - angle_deg)  
         
         year_annotations.append(
             dict(
@@ -151,7 +148,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
             )
         )
 
-    # 4) ÉVÉNEMENTS GÉOPOLITIQUES (VOTRE LOGIQUE - INCHANGÉE)
+    # 4) ÉVÉNEMENTS GÉOPOLITIQUES 
     events_data = [
         {"name": "Crise 2008", "date": "2008-09-15"},
         {"name": "Printemps arabe", "date": "2011-01-25"},
@@ -196,7 +193,7 @@ def build_polar_volume_chart(df, events, ticker, rolling_window=7):
             )
         ))
 
-    # 5) CONFIGURATION DU LAYOUT (ENHANCED FOR PERFECT CENTERING)
+    # 5) CONFIGURATION DU LAYOUT 
     fig.update_layout(
         title=dict(
             text=f"Volume journalier - {ticker} (Lissage: {rolling_window} jours)",
