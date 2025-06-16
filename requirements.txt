@@ -1,5 +1,17 @@
-pandas>=1.3
+# Framework Dash pour l'application web interactive
+dash
+dash-bootstrap-components
+
+# Visualisations interactives
 plotly>=5.0
+
+# Manipulation et analyse de données
+pandas==2.1.3
+numpy==1.24.3
+
+# Géolocalisation et codes pays pour la carte choroplèthe
 pycountry
 pycountry-convert
-dash           
+
+
+
