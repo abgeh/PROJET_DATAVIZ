@@ -47,7 +47,7 @@ Visualisation géographique des impacts régionaux révélant les vulnérabilit�
 ### 5. **Comparaison des Crises**
 Analyse comparative par catégorie d'événement (économique, géopolitique, sanitaire, politique).
 
-## 🛠️ Installation
+## Installation
 
 ### Prérequis
 - Python 3.8+
@@ -81,7 +81,8 @@ pip install -r requirements.txt
 ```bash
 python app.py
 ```
-Accédez à l'interface : ouvrez [http://localhost:8050](http://localhost:8050) dans votre navigateur.
+. **Accédez à l'interface**
+- Ouvrez [http://localhost:8050](http://localhost:8050) dans votre navigateur.
 
 
 ## Structure du projet
@@ -109,7 +110,7 @@ marches-geopolitique/
 └── README.md                           # Documentation
 ```
 
-## 🎮 Utilisation
+## Utilisation
 
 ### Navigation interactive
 1. **Commencez par la vue volume** pour comprendre l'activité globale
@@ -124,34 +125,16 @@ marches-geopolitique/
 - **Groupements** : Par région, type d'actif, ou indices individuels
 - **Métriques** : Rendements ou volatilité selon l'analyse souhaitée
 
-## 🔧 Configuration
-
-### Ajouter de nouveaux événements
-Modifier `config/events.json` :
-```json
-{
-  "name": "Nouvel Événement",
-  "date": "2024-01-15",
-  "category": "Géopolitique"
-}
-```
-
-### Ajouter de nouveaux indices
-Modifier config/tickers.json et placer les données dans data/
-
-###  Données requises
-
-#### Format des fichiers CSV
-- **Nom** : `*_Global_Markets_Data.csv`
-- **Colonnes obligatoires** : `Ticker`, `Date`, `Volume`
-- **Période recommandée** : 2008-2023
-- **Fréquence** : Données quotidiennes
 
 
 ## Auteurs
 
-- **[Votre Nom]** - *Développement principal* - [@votre-github](https://github.com/votre-username)
-- **[Collaborateur]** - *Analyse financière* - [@collaborateur-github](https://github.com/collaborateur-username)
+- **[Ahmed Baba GAH EL HILAL]** - *Développement* - 
+- **[Sofiane MOUALDI]** - *Développement* - 
+- **[Evan BLANC]** - *Développement* - 
+- **[Othmane LAKHDAR]** - *Développement* - 
+- **[Ali MOUCHAHID]** - *Développement* - 
+- **[Farid BABA]** - *Développement* - 
 
 ## Remerciements
 
