@@ -1,4 +1,4 @@
-# 📊 Impact des Événements Socio-Politiques sur les Marchés Financiers
+# Impact des Événements Socio-Politiques sur les Marchés Financiers
 
 Une application interactive qui révèle comment les crises mondiales façonnent les marchés financiers à travers 5 visualisations immersives.
 
@@ -7,11 +7,11 @@ Une application interactive qui révèle comment les crises mondiales façonnent
 ![Plotly](https://img.shields.io/badge/Plotly-5.0+-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 🌍 À propos du projet
+## À propos du projet
 
 Cette application analyse l'impact de **10 événements géopolitiques majeurs** (2008-2023) sur **12 indices financiers mondiaux**. À travers un parcours narratif interactif, découvrez comment les crises financières, pandémies, guerres et bouleversements politiques influencent les marchés.
 
-### ✨ Événements analysés
+### Événements analysés
 - **Crise Lehman Brothers** (2008) - Effondrement financier mondial
 - **Crise dette zone euro** (2010) - Crise souveraine européenne
 - **Printemps arabe** (2010) - Révolutions au Moyen-Orient  
@@ -23,28 +23,28 @@ Cette application analyse l'impact de **10 événements géopolitiques majeurs**
 - **COVID-19** (2020) - Pandémie mondiale
 - **Invasion Ukraine** (2022) - Conflit européen
 
-### 📈 Indices surveillés
+### Indices surveillés
 - **Amériques** : S&P 500, Dow Jones, NASDAQ, NYSE Composite
 - **Europe** : FTSE 100, Euronext 100
 - **Asie** : Nikkei 225, Shanghai Composite, Nifty 50, BSE Sensex
 - **Matières premières** : Or, Pétrole WTI
 
 
-## 🚀 Fonctionnalités principales
+## Fonctionnalités principales
 
-### 1. 📊 **Volume Polaire Interactif**
+### 1. **Volume Polaire Interactif**
 Visualisation chronologique des volumes d'échange sous forme de graphique polaire révélant les pics d'activité lors des crises.
 
-### 2. 🔥 **Heatmap des Rendements**
+### 2. **Heatmap des Rendements**
 Carte thermique montrant l'impact jour par jour des événements sur tous les indices mondiaux.
 
-### 3. 📈 **Analyse de Volatilité**
+### 3. **Analyse de Volatilité**
 Évolution du stress des marchés avec groupements par région, type d'actif ou indices individuels.
 
-### 4. 🗺️ **Carte Choroplèthe Mondiale**
+### 4. **Carte Choroplèthe Mondiale**
 Visualisation géographique des impacts régionaux révélant les vulnérabilités économiques.
 
-### 5. ⚖️ **Comparaison des Crises**
+### 5. **Comparaison des Crises**
 Analyse comparative par catégorie d'événement (économique, géopolitique, sanitaire, politique).
 
 ## 🛠️ Installation
@@ -84,7 +84,7 @@ python app.py
 Accédez à l'interface : ouvrez [http://localhost:8050](http://localhost:8050) dans votre navigateur.
 
 
-## 📁 Structure du projet
+## Structure du projet
 
 ```
 marches-geopolitique/
