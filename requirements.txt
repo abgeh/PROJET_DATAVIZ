@@ -7,7 +7,7 @@ plotly>=5.0
 
 # Manipulation et analyse de données
 pandas==2.3
-numpy==2.3
+numpy==1.24.3
 
 # Géolocalisation et codes pays pour la carte choroplèthe
 pycountry
